@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fusion Copilot MCP</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: Inter, "Segoe UI", sans-serif;
+        --safe: #176b42;
+        --direct: #9a3f13;
+        --panel: rgba(127, 127, 127, 0.1);
+      }
+      body { margin: 0; padding: 18px; line-height: 1.45; }
+      h1 { margin: 0 0 4px; font-size: 21px; }
+      .subtitle { margin: 0 0 18px; opacity: 0.72; }
+      .card { padding: 16px; border-radius: 12px; background: var(--panel); margin-bottom: 14px; }
+      .mode { font-size: 27px; font-weight: 750; margin: 4px 0 8px; }
+      .mode.on { color: var(--safe); }
+      .mode.off { color: var(--direct); }
+      button {
+        width: 100%; border: 0; border-radius: 9px; padding: 11px 14px;
+        font-weight: 650; cursor: pointer; background: #3578e5; color: white;
+      }
+      button.off { background: var(--direct); }
+      .detail { font-size: 13px; opacity: 0.78; }
+      .status { min-height: 22px; font-size: 13px; }
+      .error { color: #c62828; }
+      ul { padding-left: 19px; margin-bottom: 0; }
+    </style>
+  </head>
+  <body>
+    <h1>Fusion Copilot MCP</h1>
+    <p class="subtitle">Connecteur local pour travailler avec l’IA dans Fusion.</p>
+
+    <section class="card">
+      <div>Mode de sécurité</div>
+      <div id="mode" class="mode on">ON</div>
+      <p id="modeDescription" class="detail">
+        Une seule approbation est demandée pour la tâche complète.
+      </p>
+      <button id="toggle" type="button">Passer en mode OFF</button>
+    </section>
+
+    <section class="card">
+      <strong>Protections toujours actives</strong>
+      <ul class="detail">
+        <li>copie de récupération avant modification;</li>
+        <li>une transaction annulable pour toute la tâche;</li>
+        <li>validation géométrique avant validation;</li>
+        <li>journal local des opérations.</li>
+      </ul>
+    </section>
+
+    <section class="card detail">
+      <div>Pont local : <span id="bridge">initialisation…</span></div>
+      <div>Tâche : <span id="task">inactive</span></div>
+      <div id="status" class="status"></div>
+    </section>
+
+    <script>
+      let currentMode = "on";
+
+      function send(action, payload = {}) {
+        return adsk.fusionSendData(action, JSON.stringify(payload));
+      }
+
+      function render(data) {
+        currentMode = data.safety_mode || currentMode;
+        const enabled = currentMode === "on";
+        const mode = document.getElementById("mode");
+        mode.textContent = enabled ? "ON" : "OFF";
+        mode.className = `mode ${enabled ? "on" : "off"}`;
+        document.getElementById("modeDescription").textContent = enabled
+          ? "Une seule approbation est demandée pour la tâche complète."
+          : "La demande initiale autorise toute la tâche, sans approbation supplémentaire.";
+        const toggle = document.getElementById("toggle");
+        toggle.textContent = enabled ? "Passer en mode OFF" : "Passer en mode ON";
+        toggle.className = enabled ? "off" : "";
+        document.getElementById("bridge").textContent = data.bridge_port
+          ? `127.0.0.1:${data.bridge_port}`
+          : "indisponible";
+        document.getElementById("task").textContent = data.busy
+          ? data.task_id || "en cours"
+          : data.last_task || "inactive";
+        const status = document.getElementById("status");
+        status.textContent = data.error || data.message || "";
+        status.className = data.error ? "status error" : "status";
+      }
+
+      document.getElementById("toggle").addEventListener("click", () => {
+        send("set_safety_mode", { mode: currentMode === "on" ? "off" : "on" });
+      });
+
+      window.fusionJavaScriptHandler = {
+        handle(action, data) {
+          if (action === "status") render(JSON.parse(data));
+          return "OK";
+        },
+      };
+
+      send("request_status");
+    </script>
+  </body>
+</html>

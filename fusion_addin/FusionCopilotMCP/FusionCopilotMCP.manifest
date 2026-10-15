@@ -1,0 +1,13 @@
+{
+  "autodeskProduct": "Fusion360",
+  "type": "addin",
+  "id": "com.fusioncopilot.mcp",
+  "author": "Fusion Copilot MCP contributors",
+  "description": {
+    "": "Local, safety-aware MCP bridge for Autodesk Fusion."
+  },
+  "version": "0.1.0",
+  "runOnStartup": true,
+  "supportedOS": "windows",
+  "editEnabled": true
+}

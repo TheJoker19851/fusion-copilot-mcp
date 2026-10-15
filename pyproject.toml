@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fusion-copilot-mcp"
+version = "0.1.0"
+description = "A local, safety-aware MCP bridge for Autodesk Fusion."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+authors = [
+  { name = "Fusion Copilot MCP contributors" },
+]
+dependencies = [
+  "mcp>=2.3,<3",
+]
+
+[project.scripts]
+fusion-copilot-mcp = "fusion_copilot.mcp_server:main"
+
+[tool.setuptools.packages.find]
+include = ["fusion_copilot*"]
