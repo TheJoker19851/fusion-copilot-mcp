@@ -3,6 +3,8 @@
 Fusion Copilot MCP is a local bridge that lets an MCP-compatible coding agent
 inspect and automate Autodesk Fusion through a Fusion add-in.
 
+Project home: https://github.com/TheJoker19851/fusion-copilot-mcp
+
 The project is an independent experiment and is not affiliated with or endorsed
 by Autodesk or Microsoft. It uses Autodesk Fusion's public add-in interface; it
 does not reverse engineer or replace Fusion.

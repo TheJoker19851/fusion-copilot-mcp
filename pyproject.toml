@@ -16,6 +16,10 @@ dependencies = [
   "mcp>=2.3,<3",
 ]
 
+[project.urls]
+Homepage = "https://github.com/TheJoker19851/fusion-copilot-mcp"
+Issues = "https://github.com/TheJoker19851/fusion-copilot-mcp/issues"
+
 [project.scripts]
 fusion-copilot-mcp = "fusion_copilot.mcp_server:main"
 
